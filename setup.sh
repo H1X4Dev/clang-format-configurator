@@ -2,11 +2,11 @@
 set -e
 
 #Default options:
-useSystemBinaries=n
+useSystemBinaries=y
 # Use all online versions OR the list of mandatory versions
-useAllOnlineVersions=y
-mandatoryVersions="7.0.0 6.0.0 5.0.1 4.0.1 3.5.2"
-buildHead=y
+useAllOnlineVersions=n
+mandatoryVersions=""
+buildHead=n
 installSystemdService=n
 
 echo "Options for this setup:"
@@ -22,12 +22,6 @@ if [[ $useSystemBinaries == [Yy] ]]; then
     echo "* Use system clang-format versions: YES"
 else 
     echo "* Use system clang-format versions: NO"
-fi
-
-if [[ $buildHead == [Yy] ]]; then
-    echo "* Build HEAD version for server: YES"
-else 
-    echo "* Build HEAD version for server: NO"
 fi
 
 if [[ $installSystemdService == [Yy] ]]; then
@@ -166,9 +160,10 @@ do
     # shellcheck disable=SC2086
     set $tuple
     version=$1
-    source_url=$2
+    source_url="https://raw.githubusercontent.com/llvm/llvm-project/release/15.x/clang/docs/ClangFormatStyleOptions.rst"
     binary_url=$3
     #Checking urls
+    echo "checking $source_url"
     set +e
     wget -q --spider "$source_url"
     result=$?
@@ -194,46 +189,21 @@ do
                 mkdir -p "$version/bin"
                 ln -s "$binary_url" "$version/bin/clang-format"
         else
-                echo "Downloading $version"
-                wget "$binary_url" --quiet -O - | tar "$(tar_flags "$binary_url")" --strip-components=1 -C "$version" --occurrence=1 --wildcards '*bin/clang-format'
+                echo "cannot setup $version because its not installed on system"
         fi
     fi
 
     if [ ! -d "$version.src" ]
-    then
+    #then
         echo "Downloading $version.src"
         mkdir "$version.src"
-        wget "$source_url" --quiet -O - | tar "$(tar_flags "$source_url")" --strip-components=1 -C "$version.src" --occurrence=1 --wildcards '*/docs/ClangFormatStyleOptions.rst'
+        mkdir "$version.src/docs"
+        cd "$version.src/docs"
+        wget "$source_url" --quiet
+        cd ../../
         generate_default_options_list "$version" "$parser_awk"
     fi
 done
-
-
-if [[ $buildHead == [yY] ]]; then
-    echo "Building HEAD"
-    temp_dir=$(mktemp -d)
-    git clone --depth 1 http://llvm.org/git/llvm.git "$temp_dir"
-    pushd "$temp_dir/tools"
-    git clone --depth 1 http://llvm.org/git/clang.git clang
-    popd
-    pushd "$temp_dir"
-    mkdir build
-    cd build
-    cmake -G "Unix Makefiles" ..
-    make clang-format -j "$(grep -c "^processor" /proc/cpuinfo)"
-    popd
-    version="$("$temp_dir/build/bin/clang-format" --version | awk '{print $3 "+" substr($5, 0, 7)}')"
-
-    mkdir -p "$version/bin"
-    cp -f "$temp_dir/build/bin/clang-format" "$version/bin"
-
-    mkdir -p "$version.src/docs"
-    cp -f "$temp_dir/tools/clang/docs/ClangFormatStyleOptions.rst" "$version.src/docs"
-    generate_default_options_list "$version" "$parser_awk"
-
-    rm -rf "$temp_dir"
-    echo "Installed HEAD as $version"
-fi
 
 popd
 
