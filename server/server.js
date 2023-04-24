@@ -5,7 +5,6 @@ var https         = require('https');
 var body_parser   = require('body-parser');
 var Bundler       = require('parcel-bundler');
 var child_process = require('child_process');
-var userid        = require('userid');
 var path          = require('path');
 var fs            = require('fs');
 var marked        = require('marked');
