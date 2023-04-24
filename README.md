@@ -34,6 +34,7 @@ Version 0.0.4
 - Update node packages.
 - Remove `userid` package.
 - Hardcoded to use 15.x version, when setting up using LLVM script, choose 15 as your version. If you want to use 16, you can, just modify setup.sh (15.x to 16.x).
+- Forcefully remove `:versionbadge` from style options so we can properly parse it.
 
 Version 0.0.3
 

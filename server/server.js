@@ -156,7 +156,7 @@ function parse_documentation(clang_version){
 		{
 			encoding: 'utf8'
 		}
-	);
+	).replaceAll(/ :versionbadge:`clang-format(.*)`/ig, '');
 
 	var start_based_on = result.indexOf('**BasedOnStyle** (``string``)');
 	var end_based_on   = result.indexOf('.. START_FORMAT_STYLE_OPTIONS');
