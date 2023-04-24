@@ -31,10 +31,12 @@ server/launch.sh
 
 ## History
 Version 0.0.4
-- Update node packages.
-- Remove `userid` package.
-- Hardcoded to use 15.x version, when setting up using LLVM script, choose 15 as your version. If you want to use 16, you can, just modify setup.sh (15.x to 16.x).
-- Forcefully remove `:versionbadge` from style options so we can properly parse it.
+- Node Packages have been updated.
+- Removed `userid` package as it was not used.
+- Hardcoded the use to 15.x (15.0.7) WSL.
+  * This means that you must set it up using the LLVM script and choose 15 as your version. If you would like to use 16 instead of 15, modify `setup.sh` accordingly.
+- Improved option handling when `:versionbadge` is present.
+- Improved option handling for newer versions.
 
 Version 0.0.3
 

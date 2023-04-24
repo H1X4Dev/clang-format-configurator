@@ -169,7 +169,7 @@ function create_input(option_name, option_details){
 		input_template = select_input(option_name, ['Default'].concat(option_details.options));
 	else if(option_details.type === 'bool')
 		input_template = select_input(option_name, ['Default', true, false]);
-	else if(option_details.type === 'std::string' || option_details.type === 'string')
+	else if(option_details.type === 'std::string' || option_details.type.toLowerCase() === 'string')
 		input_template = string_input(option_name);
 	else if(option_details.type === 'std::vector<std::string>')
 		input_template = string_input(option_name);

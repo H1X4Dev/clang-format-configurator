@@ -176,10 +176,16 @@ function parse_documentation(clang_version){
 		var type = splits[i+1];
 		var doc  = splits[i+2];
 
+		     if (type === 'Boolean' 	   ) type = 'bool';
+		else if (type === 'Unsigned'	   ) type = 'unsigned';
+		else if (type === 'Integer' 	   ) type = 'int';
+		else if (type === 'List of Strings') type = 'std::vector<std::string>';
+
 		docs[name] = {
 			type: type,
 			doc:  marked(doc)
 		};
+
 		var recognised_types = [
 			'bool',
 			'unsigned',
